@@ -2,11 +2,18 @@ buildscript {
     dependencies {
         classpath("com.jfrog.bintray.gradle", "gradle-bintray-plugin", "1.8.4")
     }
+
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
 }
 
 plugins {
     kotlin("jvm") version "1.3.72"
 }
+
+val junitVersion = "5.6.2"
 
 group = "pl.domyno"
 version = "1.0"
@@ -16,8 +23,13 @@ repositories {
     mavenCentral()
 }
 
+
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
+
+    testImplementation("org.junit.jupiter", "junit-jupiter-api", junitVersion)
+    testImplementation("org.junit.jupiter", "junit-jupiter-params", junitVersion)
+    testRuntimeOnly("org.junit.jupiter", "junit-jupiter-engine", junitVersion)
 }
 
 tasks {
@@ -26,5 +38,8 @@ tasks {
     }
     compileTestKotlin {
         kotlinOptions.jvmTarget = "1.8"
+    }
+    test {
+        useJUnitPlatform()
     }
 }
