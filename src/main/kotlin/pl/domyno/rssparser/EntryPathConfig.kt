@@ -4,7 +4,7 @@ package pl.domyno.rssparser
  * Contains configuration for field resolution when parsing RSS/Atom document.
  * Properties define paths for corresponding properties in Feed class.
  * Default values for Atom and RSS are provided in companion object.
- * Paths are defined in path notation, for example: "rss/channel".
+ * Paths are defined in XPath relative notation, for example: "rss/channel".
  * Empty string in values marks makes field skipped while parsing.
  *
  * @property feedRoot path to feed tag
