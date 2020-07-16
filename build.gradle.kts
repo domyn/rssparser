@@ -1,8 +1,8 @@
-buildscript {
-    dependencies {
-        classpath("com.jfrog.bintray.gradle", "gradle-bintray-plugin", "1.8.4")
-    }
+import java.util.Properties
+import java.io.FileInputStream
+import com.jfrog.bintray.gradle.BintrayExtension
 
+buildscript {
     repositories {
         jcenter()
         mavenCentral()
@@ -11,12 +11,14 @@ buildscript {
 
 plugins {
     kotlin("jvm") version "1.3.72"
+    id("com.jfrog.bintray") version "1.8.5"
+    `maven-publish`
 }
 
 val junitVersion = "5.6.2"
 
 group = "pl.domyno"
-version = "1.0"
+version = "1.0.0"
 
 repositories {
     jcenter()
@@ -43,4 +45,37 @@ tasks {
     test {
         useJUnitPlatform()
     }
+}
+
+val sourcesJar by tasks.registering(Jar::class) {
+    archiveClassifier.set("sources")
+    from(sourceSets.main.get().allSource)
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            from(components["java"])
+            artifact(sourcesJar.get())
+        }
+    }
+}
+
+val localProperties = Properties().apply { load(FileInputStream(project.rootProject.file("local.properties"))) }
+
+bintray {
+    user = localProperties.getProperty("bintray.user")
+    key = localProperties.getProperty("bintray.apikey")
+    setPublications("maven")
+
+    pkg(closureOf<BintrayExtension.PackageConfig> {
+        repo = "maven"
+        name = rootProject.name
+        setLicenses("Apache-2.0")
+        publish = true
+        vcsUrl = "https://github.com/domyn/rssparser"
+        version(closureOf<BintrayExtension.VersionConfig> {
+            name = rootProject.version.toString()
+        })
+    })
 }
